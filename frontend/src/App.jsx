@@ -1,10 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
-import UserList from "./components/UserList";
-import RegisterUser from "./components/RegisterUser";
 import Profile from "./pages/Profile";
-import Home from './pages/Home';
+import UserManagement from "./pages/UserManagement";
+import Home from "./pages/Home";
 import { UserProvider } from "./context/UserContext";
 
 function App() {
@@ -16,8 +15,7 @@ function App() {
           <Route element={<Dashboard />}>
             <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/users" element={<UserList />} />
-            <Route path="/users/create" element={<RegisterUser />} />
+            <Route path="/users/manage" element={<UserManagement />} />
           </Route>
         </Routes>
       </UserProvider>
