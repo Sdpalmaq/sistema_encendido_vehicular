@@ -1,4 +1,3 @@
-// src/validators/user.validator.js
 import { check } from "express-validator";
 
 export const createUserValidator = [
