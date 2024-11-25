@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import UserManagement from "./pages/UserManagement";
+import VehiclesManagement from "./pages/VehiclesManagement";
 import Home from "./pages/Home";
 import { UserProvider } from "./context/UserContext";
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/users/manage" element={<UserManagement />} />
+            <Route path="/vehicles/manage" element={<VehiclesManagement />} />
           </Route>
         </Routes>
       </UserProvider>

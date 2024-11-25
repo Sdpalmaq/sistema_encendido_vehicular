@@ -42,7 +42,7 @@ const Sidebar = ({ isAdmin }) => {
             </li>
             <li className="mb-6">
               <Link
-                to="/users/manage"
+                to="/vehicles/manage"
                 className="flex items-center p-2 hover:bg-gray-700 rounded-md transition-colors"
               >
                 <AiOutlineCar className="mr-3" />
