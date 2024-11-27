@@ -36,7 +36,7 @@ export const getVehiculos = async (req, res) => {
 export const updateVehiculo = async (req, res) => {
   try {
     const { id } = req.params;
-    const { propietario_cedula, marca, modelo, año } = req.body;
+    const { propietario_cedula,placa, marca, modelo, anio } = req.body;
 
     // Verificar si el propietario existe antes de actualizar
     if (propietario_cedula) {
@@ -48,7 +48,7 @@ export const updateVehiculo = async (req, res) => {
       }
     }
 
-    const updatedVehiculo = await Vehiculo.update(placa, req.body);
+    const updatedVehiculo = await Vehiculo.update(id, req.body);
 
     if (!updatedVehiculo) {
       return res.status(404).json({ message: "Vehículo no encontrado" });

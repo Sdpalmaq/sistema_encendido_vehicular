@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import VehiculosList from "../components/VehiculosList";
+import VehiclesFormModal from "../components/VehiclesFormModal";
 
 const VehiclesManagement = () => {
   const [vehiculos, setVehiculos] = useState([]);
   const [selectedVehiculo, setSelectedVehiculo] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    placa: "",
+    marca: "",
+    modelo: "",
+    anio: "",
+    propietario_cedula: "",
+    estado: false,
+  });
 
   useEffect(() => {
     fetchVehiculos();
@@ -15,18 +24,38 @@ const VehiclesManagement = () => {
     try {
       const response = await api.get("/vehiculos");
       setVehiculos(response.data);
-      console.log(response.data);
     } catch (error) {
-      console.error("Error al obtener los vehiculos:", error);
+      console.error("Error al obtener los vehículos:", error);
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   const handleCreate = () => {
+    setFormData({
+      placa: "",
+      marca: "",
+      modelo: "",
+      anio: "",
+      propietario_cedula: "",
+      estado: false,
+    });
     setSelectedVehiculo(null);
     setIsModalOpen(true);
   };
 
   const handleEdit = (vehiculo) => {
+    setFormData({
+      placa: vehiculo.placa,
+      marca: vehiculo.marca,
+      modelo: vehiculo.modelo,
+      anio: vehiculo.anio,
+      propietario_cedula: vehiculo.propietario_cedula,
+      estado: vehiculo.estado,
+    });
     setSelectedVehiculo(vehiculo);
     setIsModalOpen(true);
   };
@@ -34,16 +63,34 @@ const VehiclesManagement = () => {
   const handleDelete = async (id) => {
     try {
       await api.delete(`/vehiculos/${id}`);
-      fetchVehiculos(); // Refresca la lista de vehiculos
+      fetchVehiculos(); // Refresca la lista de vehículos
     } catch (error) {
-      console.error("Error al eliminar vehiculo:", error);
+      console.error("Error al eliminar el vehículo:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      if (selectedVehiculo) {
+        // Editar vehículo existente
+        await api.put(`/vehiculos/${selectedVehiculo.id}`, formData);
+      } else {
+        // Crear nuevo vehículo
+        await api.post("/vehiculos", formData);
+      }
+
+      setIsModalOpen(false);
+      fetchVehiculos(); // Actualizar la lista de vehículos
+    } catch (error) {
+      console.error("Error al guardar el vehículo:", error);
     }
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedVehiculo(null);
-    fetchVehiculos(); // Refresca la lista después de crear o editar
   };
 
   return (
@@ -55,19 +102,21 @@ const VehiclesManagement = () => {
         onClick={handleCreate}
         className="mb-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow-lg"
       >
-        Agregar Vehiculo
+        Agregar Vehículo
       </button>
       <VehiculosList
         vehiculos={vehiculos}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
-      {isModalOpen && (
-        <div>
-          <button onClick={handleModalClose}>Cerrar</button>
-          <div>Modal</div>
-        </div>
-      )}
+      <VehiclesFormModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onSubmit={handleSubmit}
+        formData={formData}
+        onInputChange={handleInputChange}
+        isEditing={!!selectedVehiculo}
+      />
     </div>
   );
 };

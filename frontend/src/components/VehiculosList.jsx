@@ -5,7 +5,6 @@ const VehiculosList = ({ vehiculos, onEdit, onDelete }) => {
   const itemsPerPage = 5; // Número de vehículos por página
   const totalPages = Math.ceil(vehiculos.length / itemsPerPage);
 
-  // Calcular el índice de inicio y fin de los elementos en la página actual
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentVehiculos = vehiculos.slice(
     startIndex,
@@ -25,21 +24,27 @@ const VehiculosList = ({ vehiculos, onEdit, onDelete }) => {
       <table className="w-full bg-white rounded-lg shadow-lg overflow-hidden">
         <thead>
           <tr className="bg-blue-500 text-white text-left">
-            <th className="p-3">Matrícula</th>
+            <th className="p-3">Placa</th>
             <th className="p-3">Marca</th>
             <th className="p-3">Modelo</th>
-            <th className="p-3">Propietario</th>
+            <th className="p-3">Año</th>
+            <th className="p-3">Cédula Propietario</th>
+            <th className="p-3">Estado</th>
+            <th className="p-3">Fecha Registro</th>
             <th className="p-3">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {currentVehiculos.map((vehiculo) => (
-            <tr key={vehiculo.id}className="border-b hover:bg-gray-100"   >
+            <tr key={vehiculo.id}>
               <td className="p-3">{vehiculo.placa}</td>
               <td className="p-3">{vehiculo.marca}</td>
               <td className="p-3">{vehiculo.modelo}</td>
+              <td className="p-3">{vehiculo.anio}</td>
+              <td className="p-3">{vehiculo.propietario_cedula}</td>
+              <td className="p-3">{vehiculo.estado ? "Activo" : "Inactivo"}</td>
               <td className="p-3">
-                {vehiculo.propietario_cedula}
+                {new Date(vehiculo.fecha_registro).toLocaleDateString()}
               </td>
               <td className="p-3 flex space-x-2">
                 <button
@@ -59,7 +64,6 @@ const VehiculosList = ({ vehiculos, onEdit, onDelete }) => {
           ))}
         </tbody>
       </table>
-      {/* Paginación */}
       <div className="flex items-center justify-between mt-4">
         <button
           onClick={handlePrevPage}

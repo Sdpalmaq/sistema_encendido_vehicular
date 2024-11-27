@@ -25,16 +25,16 @@ class Vehiculo {
 
   // Actualizar vehículo
   static async update(id, vehiculoData) {
-    const { marca, modelo, anio, propietario_cedula } = vehiculoData;
+    const { placa,marca, modelo, anio, propietario_cedula } = vehiculoData;
 
     const query = `
       UPDATE vehiculos 
-      SET marca = $1, modelo = $2, anio = $3, propietario_cedula = $4
-      WHERE id = $5 AND estado = true
+      SET placa = $1, marca = $2, modelo = $3, anio = $4, propietario_cedula = $5
+      WHERE id = $6 AND estado = true
       RETURNING id, placa, marca, modelo, anio, propietario_cedula, estado, fecha_registro
     `;
 
-    const values = [marca, modelo, anio, propietario_cedula, id];
+    const values = [placa, marca, modelo, anio, propietario_cedula, id];
     const result = await pool.query(query, values);
     return result.rows[0];
   }
