@@ -32,6 +32,13 @@ const UserManagement = () => {
   };
 
   const handleDelete = async (cedula) => {
+    // Mostrar confirmación antes de eliminar
+    const confirmed = window.confirm(
+      "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
+    );
+
+    if (!confirmed) return;
+
     try {
       await api.delete(`/users/${cedula}`);
       fetchUsers(); // Refresca la lista de usuarios
@@ -40,15 +47,10 @@ const UserManagement = () => {
     }
   };
 
-  const handleModalClose = (createdUserPassword) => {
+  const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedUser(null);
     fetchUsers(); // Refresca la lista después de crear o editar
-
-    // Mostrar la contraseña generada, si existe
-    if (createdUserPassword) {
-      alert(`Usuario creado exitosamente. La contraseña generada es: ${createdUserPassword}`);
-    }
   };
 
   return (
