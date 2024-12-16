@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import VehiculosList from "../components/VehiculosList";
 import VehiclesFormModal from "../components/VehiclesFormModal";
+import ValidationPendingList from "../components/ValidationPendingList";
 
 const VehiclesManagement = () => {
   const [vehiculos, setVehiculos] = useState([]);
+  const [pendientes, setPendientes] = useState([]);
   const [selectedVehiculo, setSelectedVehiculo] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -18,6 +20,7 @@ const VehiclesManagement = () => {
 
   useEffect(() => {
     fetchVehiculos();
+    fetchPendientes();
   }, []);
 
   const fetchVehiculos = async () => {
@@ -26,6 +29,15 @@ const VehiclesManagement = () => {
       setVehiculos(response.data);
     } catch (error) {
       console.error("Error al obtener los vehículos:", error);
+    }
+  };
+
+  const fetchPendientes = async () => {
+    try {
+      const response = await api.get("/vehiculos/pending");
+      setPendientes(response.data);
+    } catch (error) {
+      console.error("Error al obtener los vehículos pendientes:", error);
     }
   };
 
@@ -63,9 +75,23 @@ const VehiclesManagement = () => {
   const handleDelete = async (id) => {
     try {
       await api.delete(`/vehiculos/${id}`);
-      fetchVehiculos(); // Refresca la lista de vehículos
+      fetchVehiculos();
     } catch (error) {
       console.error("Error al eliminar el vehículo:", error);
+    }
+  };
+
+  const handleValidate = async (id, isApproved, comentarios) => {
+    try {
+      await api.post(`/vehiculos/validar`, {
+        id,
+        estado: isApproved ? "Activo" : "Rechazado",
+        comentarios,
+      });
+      fetchPendientes();
+      fetchVehiculos();
+    } catch (error) {
+      console.error("Error al validar el vehículo:", error);
     }
   };
 
@@ -74,15 +100,13 @@ const VehiclesManagement = () => {
 
     try {
       if (selectedVehiculo) {
-        // Editar vehículo existente
         await api.put(`/vehiculos/${selectedVehiculo.id}`, formData);
       } else {
-        // Crear nuevo vehículo
         await api.post("/vehiculos", formData);
       }
 
       setIsModalOpen(false);
-      fetchVehiculos(); // Actualizar la lista de vehículos
+      fetchVehiculos();
     } catch (error) {
       console.error("Error al guardar el vehículo:", error);
     }
@@ -94,21 +118,37 @@ const VehiclesManagement = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10">
+    <div className="max-w-6xl mx-auto mt-10">
       <h2 className="text-2xl font-semibold mb-6 text-gray-700">
         Gestión de Vehículos
       </h2>
-      <button
-        onClick={handleCreate}
-        className="mb-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow-lg"
-      >
-        Agregar Vehículo
-      </button>
-      <VehiculosList
-        vehiculos={vehiculos}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      <div className="mb-8">
+        <button
+          onClick={handleCreate}
+          className="mb-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow-lg"
+        >
+          Agregar Vehículo
+        </button>
+      </div>
+      <div className="mb-10">
+        <h3 className="text-xl font-semibold text-gray-600 mb-4">
+          Vehículos Registrados
+        </h3>
+        <VehiculosList
+          vehiculos={vehiculos}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      </div>
+      <div>
+        <h3 className="text-xl font-semibold text-gray-600 mb-4">
+          Pendientes de Validación
+        </h3>
+        <ValidationPendingList
+          pendientes={pendientes}
+          onValidate={handleValidate}
+        />
+      </div>
       <VehiclesFormModal
         isOpen={isModalOpen}
         onClose={handleModalClose}

@@ -1,6 +1,15 @@
 import pool from "../config/database.js";
 import bcrypt from "bcryptjs";
 
+const generatePassword = () => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from(
+    { length: 8 },
+    () => chars[Math.floor(Math.random() * chars.length)]
+  ).join("");
+};
+
 class User {
   // Buscar usuario por correo
   static async findByEmail(email) {
@@ -18,14 +27,9 @@ class User {
 
   // Crear nuevo usuario
   static async create(userData) {
-    const {
-      cedula,
-      nombre,
-      apellido,
-      correo,
-      telefono,
-      contrasena,
-    } = userData;
+    const { cedula, nombre, apellido, correo, telefono } = userData;
+
+    const contrasena = generatePassword(); // Genera una contraseña
 
     const hashedPassword = await bcrypt.hash(contrasena, 10);
 
@@ -33,20 +37,17 @@ class User {
       INSERT INTO usuarios 
         (cedula, nombre, apellido, correo, telefono, contrasena)
       VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING cedula, nombre, apellido, correo, telefono, es_administrador, fecha_creacion, estado
+      RETURNING cedula, nombre, apellido, correo, telefono, es_administrador, fecha_creacion, estado, tiene_vehiculo
     `;
 
-    const values = [
-      cedula,
-      nombre,
-      apellido,
-      correo,
-      telefono,
-      hashedPassword,
-    ];
+    const values = [cedula, nombre, apellido, correo, telefono, hashedPassword];
 
     const result = await pool.query(query, values);
-    return result.rows[0];
+    // Incluye la contraseña generada en la respuesta
+    return {
+      ...result.rows[0],
+      generatedPassword: contrasena,
+    };
   }
 
   // Actualizar usuario
@@ -60,13 +61,7 @@ class User {
       RETURNING cedula, nombre, apellido, correo, telefono, es_administrador, fecha_creacion, estado
     `;
 
-    const values = [
-      nombre,
-      apellido,
-      correo,
-      telefono,
-      cedula,
-    ];
+    const values = [nombre, apellido, correo, telefono, cedula];
 
     const result = await pool.query(query, values);
     return result.rows[0];
@@ -77,7 +72,7 @@ class User {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     const query =
-      "UPDATE usuarios SET contrasena = $1 WHERE cedula = $2 AND estado = true";
+      "UPDATE usuarios SET contrasena = $1, debe_cambiar_contrasena = FALSE WHERE cedula = $2 AND estado = true";
     await pool.query(query, [hashedPassword, cedula]);
   }
 
@@ -105,6 +100,12 @@ class User {
   // Verificar contraseña
   static async verifyPassword(hashedPassword, plainPassword) {
     return await bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  static async updateTieneVehiculo(cedula, tieneVehiculo) {
+    const query =
+      "UPDATE usuarios SET tiene_vehiculo = $1 WHERE cedula = $2 AND estado = true";
+    await pool.query(query, [tieneVehiculo, cedula]);
   }
 }
 

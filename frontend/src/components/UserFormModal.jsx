@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../services/api";
 
 const validateForm = (formData) => {
-  const requiredFields = ["cedula", "nombre", "correo", "contrasena"];
+  const requiredFields = ["cedula", "nombre", "correo"];
   for (const field of requiredFields) {
     if (!formData[field]) {
       return `El campo ${field} es obligatorio`;
@@ -11,21 +11,26 @@ const validateForm = (formData) => {
   if (formData.cedula.length !== 10) {
     return "La cédula debe tener exactamente 10 dígitos";
   }
-  if (formData.contrasena.length < 6) {
-    return "La contraseña debe tener al menos 6 caracteres";
-  }
   return null;
 };
 
-const submitForm = async (user, formData, setSuccess, setError) => {
+const submitForm = async (user, formData, setSuccess, setError, onClose) => {
   try {
     if (user) {
+      // Actualizar usuario existente
       await api.put(`/users/${user.cedula}`, formData);
     } else {
-      await api.post("/users", formData);
-      setSuccess("Usuario registrado con éxito");
+      // Crear nuevo usuario
+      const response = await api.post("/users", formData);
+      console.log(response);
+      const { generatedPassword } = response.data; // Captura la contraseña generada
+      alert(
+        `Usuario registrado con éxito. La contraseña generada es: ${generatedPassword}`
+      );
     }
     setError("");
+    setSuccess("Operación realizada con éxito");
+    onClose();
     return true;
   } catch (error) {
     const serverMessage = error.response?.data?.message;
@@ -40,8 +45,7 @@ const UserFormModal = ({ isOpen, onClose, user }) => {
     nombre: "",
     apellido: "",
     correo: "",
-    telefono: "",
-    contrasena: "",
+    telefono: "", 
   };
 
   const [formData, setFormData] = useState(initialFormData);
@@ -81,11 +85,7 @@ const UserFormModal = ({ isOpen, onClose, user }) => {
       return;
     }
 
-    const isSuccess = await submitForm(user, formData, setSuccess, setError);
-    if (isSuccess) {
-      resetForm();
-      onClose();
-    }
+    await submitForm(user, formData, setSuccess, setError, onClose);
     setIsLoading(false);
   };
 
@@ -128,7 +128,6 @@ const UserFormModal = ({ isOpen, onClose, user }) => {
                 {field}
               </label>
               <input
-                type={field === "contrasena" ? "password" : "text"}
                 id={field}
                 name={field}
                 value={formData[field] || ""}
@@ -137,6 +136,7 @@ const UserFormModal = ({ isOpen, onClose, user }) => {
                 required={field !== "apellido" && field !== "telefono"}
                 aria-required={field !== "apellido" && field !== "telefono"}
                 aria-label={field}
+                disabled={field === "contrasena"} // Deshabilitar campo de contraseña
               />
             </div>
           ))}

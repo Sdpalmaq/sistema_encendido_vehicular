@@ -72,7 +72,7 @@ export const updateUserValidator = [
 ];
 
 export const updatePasswordValidator = [
-  check("contrasena")
+  check("nuevaContrasena")
     .isLength({ min: 6 })
     .withMessage("La contraseña debe tener al menos 6 caracteres"),
 ];

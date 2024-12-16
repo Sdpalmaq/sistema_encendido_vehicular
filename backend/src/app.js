@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
+import morgan from "morgan";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -12,6 +13,14 @@ import registroAccesoRoutes from "./routes/registrosAcceso.routes.js";
 
 const app = express();
 
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  const message = err.message || "Error interno del servidor";
+  console.error(`[${req.method}] ${req.url} - Error: ${message}`);
+  res.status(status).json({ error: message });
+});
+
 // Middlewares
 app.use(
   cors({
@@ -21,6 +30,7 @@ app.use(
 );
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
+app.use(morgan("combined")); // Logs detallados
 
 // Routes
 app.use("/api/auth", authRoutes);

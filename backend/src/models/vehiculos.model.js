@@ -13,9 +13,9 @@ class Vehiculo {
     const { placa, marca, modelo, anio, propietario_cedula } = vehiculoData;
 
     const query = `
-      INSERT INTO vehiculos (placa, marca, modelo, anio, propietario_cedula)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, placa, marca, modelo, anio, propietario_cedula, estado, fecha_registro
+      INSERT INTO vehiculos (placa, marca, modelo, anio, propietario_cedula, validado)
+      VALUES ($1, $2, $3, $4, $5, false) -- Por defecto, no validado
+      RETURNING id, placa, marca, modelo, anio, propietario_cedula, validado, estado, fecha_registro
     `;
 
     const values = [placa, marca, modelo, anio, propietario_cedula];
@@ -25,7 +25,7 @@ class Vehiculo {
 
   // Actualizar vehículo
   static async update(id, vehiculoData) {
-    const { placa,marca, modelo, anio, propietario_cedula } = vehiculoData;
+    const { placa, marca, modelo, anio, propietario_cedula } = vehiculoData;
 
     const query = `
       UPDATE vehiculos 
@@ -56,6 +56,35 @@ class Vehiculo {
       "UPDATE vehiculos SET estado = false WHERE id = $1 AND estado = true";
     const result = await pool.query(query, [id]);
     return result.rowCount > 0;
+  }
+
+  // Validar o rechazar un vehículo
+  static async validate(id, validado, comentarios_admin) {
+    const query = `
+      UPDATE vehiculos
+      SET validado = $1, comentarios_admin = $2
+      WHERE id = $3
+      RETURNING id, placa, marca, modelo, anio, propietario_cedula, validado, comentarios_admin
+    `;
+    const values = [validado, comentarios_admin, id];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+
+  // Obtener vehículos pendientes de validación
+  static async findPendingValidation() {
+    const query = `
+        SELECT * FROM vehiculos
+        WHERE validado = false AND estado = true
+      `;
+    const result = await pool.query(query);
+    return result.rows;
+  }
+
+  static async findByPropietario(propietarioCedula) {
+    const query = "SELECT * FROM vehiculos WHERE propietario_cedula = $1";
+    const result = await pool.query(query, [propietarioCedula]);
+    return result.rows;
   }
 }
 

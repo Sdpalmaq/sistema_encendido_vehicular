@@ -1,0 +1,21 @@
+{
+    "status": {
+      "status": "ok"
+    },
+    "start": {
+      "message": "Sistema iniciado correctamente"
+    },
+    "fingerprints": [
+      {
+        "id": 1,
+        "name": "Huella Usuario 1",
+        "status": "registrado"
+      },
+      {
+        "id": 2,
+        "name": "Huella Usuario 2",
+        "status": "pendiente"
+      }
+    ]
+  }
+  

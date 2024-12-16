@@ -1,4 +1,3 @@
-// src/pages/UserManagement.jsx
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import UserFormModal from "../components/UserFormModal";
@@ -41,10 +40,15 @@ const UserManagement = () => {
     }
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = (createdUserPassword) => {
     setIsModalOpen(false);
     setSelectedUser(null);
     fetchUsers(); // Refresca la lista después de crear o editar
+
+    // Mostrar la contraseña generada, si existe
+    if (createdUserPassword) {
+      alert(`Usuario creado exitosamente. La contraseña generada es: ${createdUserPassword}`);
+    }
   };
 
   return (

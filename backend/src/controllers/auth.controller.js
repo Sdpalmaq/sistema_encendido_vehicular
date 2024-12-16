@@ -2,9 +2,8 @@ import jwt from 'jsonwebtoken';
 import User  from '../models/user.model.js';
 
 export const login = async (req, res) => {
+  const { correo, contrasena } = req.body;
     try {
-      const { correo, contrasena } = req.body;
-      
       const user = await User.findByEmail(correo);
       if (!user) {
         return res.status(401).json({ message: "Usuario o contraseña incorrectos" });
@@ -13,6 +12,10 @@ export const login = async (req, res) => {
       const validPassword = await User.verifyPassword(user.contrasena, contrasena);
       if (!validPassword) {
         return res.status(401).json({ message: "Usuario o contraseña incorrectos" });
+      }
+
+      if (user.debe_cambiar_contrasena) {
+        return res.status(200).json({ user, debeCambiarContrasena: true });
       }
   
       const token = jwt.sign(

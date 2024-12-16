@@ -5,6 +5,8 @@ import {
   updatePassword,
   deleteUser,
   updateUser,
+  requestPasswordReset,
+  resetPassword,
 } from "../controllers/user.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import { isAdmin } from "../middleware/admin.middleware.js";
@@ -17,11 +19,7 @@ import {
 
 const router = Router();
 
-router.post(
-  "/",
-  [verifyToken, isAdmin, createUserValidator, validateRequest],
-  createUser
-);
+router.post("/", [verifyToken, isAdmin, validateRequest], createUser);
 
 router.get("/", verifyToken, getUsers);
 
@@ -33,10 +31,13 @@ router.put(
 
 router.patch(
   "/:cedula/password",
-  [verifyToken, isAdmin, updatePasswordValidator, validateRequest],
+  [updatePasswordValidator, validateRequest],
   updatePassword
 );
 
 router.delete("/:cedula", [verifyToken, isAdmin], deleteUser);
+
+router.post("/password-reset", requestPasswordReset); //solicitar enlace
+router.post("/reset-password", resetPassword); //resetear contraseña
 
 export default router;

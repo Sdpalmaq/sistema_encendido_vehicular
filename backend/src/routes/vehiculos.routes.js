@@ -4,6 +4,8 @@ import {
   getVehiculos,
   updateVehiculo,
   deleteVehiculo,
+  getPendingVehiculos,
+  validateVehiculo,
 } from "../controllers/vehiculos.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import { isAdmin } from "../middleware/admin.middleware.js";
@@ -17,7 +19,7 @@ const router = Router();
 
 router.post(
   "/",
-  [verifyToken, isAdmin, createVehiculoValidator, validateRequest],
+  [verifyToken, createVehiculoValidator, validateRequest],
   createVehiculo
 );
 
@@ -30,5 +32,9 @@ router.put(
 );
 
 router.delete("/:id", [verifyToken, isAdmin], deleteVehiculo);
+
+router.get("/pending", [verifyToken, isAdmin], getPendingVehiculos);
+
+router.patch("/:id/validate", [verifyToken, isAdmin], validateVehiculo);
 
 export default router;

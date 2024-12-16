@@ -1,15 +1,7 @@
-import Login from '../components/Login';
-import { useNavigate } from 'react-router-dom';
+import Login from "../components/Login";
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-
-  const handleLoginSuccess = (user) => {
-    // Guardar el usuario en el estado o localStorage
-    navigate('/home');
-  };
-
-  return <Login onLoginSuccess={handleLoginSuccess} />;
+  return <Login  />;
 };
 
 export default LoginPage;
