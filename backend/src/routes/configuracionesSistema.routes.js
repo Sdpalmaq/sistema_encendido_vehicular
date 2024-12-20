@@ -1,21 +1,27 @@
-import { Router } from "express";
+import express from "express";
 import {
-  upsertConfiguracion,
+  createConfiguracion,
+  getConfiguracionById,
   getConfiguraciones,
+  associateConfiguracion,
+  deleteConfiguracion,
 } from "../controllers/configuraciones_sistema.controller.js";
-import { verifyToken } from "../middleware/auth.middleware.js";
-import { isAdmin } from "../middleware/admin.middleware.js";
-import { validateRequest } from "../middleware/validate.middleware.js";
-import { upsertConfiguracionValidator } from "../validators/configuracionesSistema.validator.js";
 
-const router = Router();
+const router = express.Router();
 
-router.post(
-  "/",
-  [verifyToken, isAdmin, upsertConfiguracionValidator, validateRequest],
-  upsertConfiguracion
-);
+// Crear una nueva placa ESP32
+router.post("/", createConfiguracion);
 
-router.get("/", verifyToken, getConfiguraciones);
+// Obtener todas las placas ESP32
+router.get("/", getConfiguraciones);
+
+// Obtener una placa ESP32 por ID
+router.get("/:id_esp32", getConfiguracionById);
+
+// Asociar una placa ESP32 con un vehículo
+router.put("/:id_esp32", associateConfiguracion);
+
+// Eliminar una placa ESP32
+router.delete("/:id_esp32", deleteConfiguracion);
 
 export default router;
