@@ -1,7 +1,14 @@
 import axios from "axios";
 
+// URL base de la API
+const BASE_URL = "https://tesis-backend-xro2.onrender.com/api";
+
 const api = axios.create({
-  baseURL: "http://192.168.1.8:3000/api",
+  baseURL: BASE_URL,
+  timeout: 5000, // Tiempo de espera para las solicitudes
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export default api;
