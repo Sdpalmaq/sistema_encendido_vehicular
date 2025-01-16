@@ -20,10 +20,24 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "CHANGE_WIFI_STATE",
+        "ACCESS_WIFI_STATE"
+      ],
+      "package": "com.sdpalmaq.App_S_V"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "31fe1aaa-3496-4c0e-aaf0-573dd0326364"
+      }
     }
   }
 }

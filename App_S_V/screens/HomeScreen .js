@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-
 const HomeScreen = ({ navigation, route }) => {
   const { user, vehiculo } = route.params;
 
@@ -19,6 +18,9 @@ const HomeScreen = ({ navigation, route }) => {
 
   const handleFactoryReset = () => {
     navigation.navigate("FactoryReset", { user, vehiculo });
+  };
+  const handleSettings = () => {
+    navigation.navigate("Settings", { user, vehiculo });
   };
 
   return (
@@ -49,6 +51,13 @@ const HomeScreen = ({ navigation, route }) => {
         onPress={handleFactoryReset}
       >
         <Text style={styles.buttonText}>Restaurar Sistema</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: "#007bff" }]}
+        onPress={handleSettings}
+      >
+        <Text style={styles.buttonText}>Configuración</Text>
       </TouchableOpacity>
     </View>
   );

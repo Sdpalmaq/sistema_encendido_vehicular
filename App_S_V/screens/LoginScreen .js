@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useAuth } from "../App";
+import * as LocalAuthentication from "expo-local-authentication";
 import {
   View,
   Text,
@@ -14,6 +16,44 @@ const LoginScreen = ({ navigation }) => {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { setUser, isOnline } = useAuth();
+
+  const handleLocalLogin = async () => {
+    try {
+      const isBiometricSupported = await LocalAuthentication.hasHardwareAsync();
+      if (!isBiometricSupported) {
+        Alert.alert(
+          "Error",
+          "Tu dispositivo no soporta autenticación biométrica."
+        );
+        return;
+      }
+
+      const biometricRecords = await LocalAuthentication.isEnrolledAsync();
+      if (!biometricRecords) {
+        Alert.alert("Error", "No hay registros biométricos configurados.");
+        return;
+      }
+
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Autentícate para acceder",
+      });
+
+      if (result.success) {
+        // Simula un usuario local para el flujo offline
+        const localUser = {
+          nombre: "Usuario Local",
+          vehiculo: "Vehículo Local",
+        };
+        setUser(localUser);
+        navigation.navigate("LocalModeScreen"); // Redirige al modo local
+      } else {
+        Alert.alert("Error", "Autenticación fallida.");
+      }
+    } catch (error) {
+      console.error("Error en autenticación local:", error);
+    }
+  };
 
   const isEmailValid = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,6 +61,11 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
+    if (!isOnline) {
+      handleLocalLogin();
+      return;
+    }
+
     if (!correo || !contrasena) {
       Alert.alert("Error", "Por favor, completa todos los campos.");
       return;
@@ -53,7 +98,7 @@ const LoginScreen = ({ navigation }) => {
             const vehiculos = vehiculosResponse.data;
 
             if (vehiculos.length === 1) {
-              navigation.navigate("Home", {
+              navigation.navigate("ModeDetection", {
                 user,
                 vehiculo: vehiculos[0],
               });
@@ -114,7 +159,9 @@ const LoginScreen = ({ navigation }) => {
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Ingresar</Text>
+          <Text style={styles.buttonText}>
+            {isOnline ? "Iniciar Sesión" : "Autenticación Local"}
+          </Text>
         )}
       </TouchableOpacity>
     </View>

@@ -23,7 +23,7 @@ const SelectVehicleScreen = ({ route, navigation }) => {
         {
           text: "Seleccionar",
           onPress: () =>
-            navigation.navigate("Home", {
+            navigation.navigate("ModeDetection", {
               user,
               vehiculo,
             }),

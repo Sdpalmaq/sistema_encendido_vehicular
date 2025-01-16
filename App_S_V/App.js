@@ -1,6 +1,8 @@
 import React, { useContext, useState, createContext, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import NetInfo from "@react-native-community/netinfo";
+
 import Toast from "react-native-toast-message"; // Importar Toast para notificaciones
 import LoginScreen from "./screens/LoginScreen ";
 import HomeScreen from "./screens/HomeScreen ";
@@ -13,6 +15,12 @@ import LocalInstructionsScreen from "./screens/LocalInstructionsScreen";
 import FingerprintManagementScreen from "./screens/FingerprintManagementScreen";
 import ForcedStartScreen from "./screens/ForcedStartScreen";
 import FactoryResetScreen from "./screens/FactoryResetScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+import ModeDetectionScreen from "./screens/ModeDetectionScreen";
+import LocalModeInstructionsScreen from "./screens/LocalModeInstructionsScreen";
+import LocalFingerprintScreen from "./screens/LocalFingerprintScreen";
+import LocalForceStartScreen from "./screens/LocalForceStartScreen";
+import LocalRestoreScreen from "./screens/LocalRestoreScreen";
 
 const Stack = createStackNavigator();
 const AuthContext = createContext();
@@ -20,6 +28,16 @@ const AuthContext = createContext();
 export default function App() {
   const [user, setUser] = useState(null); // Estado global para el usuario
   const [ws, setWs] = useState(null); // Estado global para el WebSocket
+  const [isOnline, setIsOnline] = useState(true); // Estado global para el estado de conexión
+
+  // Verificar la conectividad de red
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsOnline(state.isConnected);
+    });
+  
+    return () => unsubscribe(); // Limpia el listener
+  }, []);
 
   // Conectar WebSocket al iniciar
   useEffect(() => {
@@ -59,7 +77,7 @@ export default function App() {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, ws }}>
+    <AuthContext.Provider value={{ user, setUser, ws, isOnline }}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
@@ -116,6 +134,36 @@ export default function App() {
             name="FactoryReset"
             component={FactoryResetScreen}
             options={{ title: "Restaurar Sistema" }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{ title: "Configuración" }}
+          />
+          <Stack.Screen
+            name="ModeDetection"
+            component={ModeDetectionScreen}
+            options={{ title: "Modo de operación" }}
+          />
+          <Stack.Screen
+            name="LocalModeScreen"
+            component={LocalModeInstructionsScreen}
+            options={{ title: "Modo local" }}
+          />
+          <Stack.Screen
+            name="LocalFingerprintScreen"
+            component={LocalFingerprintScreen}
+            options={{ title: "Huella dactilar" }}
+          />
+          <Stack.Screen
+            name="LocalForceStartScreen"
+            component={LocalForceStartScreen}
+            options={{ title: "Forzar inicio" }}
+          />
+          <Stack.Screen
+            name="LocalRestoreScreen"
+            component={LocalRestoreScreen}
+            options={{ title: "Restaurar sistema" }}
           />
         </Stack.Navigator>
         <Toast />
