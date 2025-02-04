@@ -33,22 +33,7 @@ const ModeDetectionScreen = ({ navigation, route }) => {
       console.log(
         "No se pudo conectar en modo remoto, intentando modo local..."
       );
-      // Intentar modo local
-      try {
-        const localResponse = await axios.get("http://192.168.4.1/status", {
-          timeout: 5000, // Timeout para conexiones locales
-        });
-        if (localResponse.data.connected) {
-          setMode("local");
-          navigation.replace("LocalModeScreen", { user, vehiculo });
-        }
-      } catch (localError) {
-        console.log("Error en modo local:", localError);
-        Alert.alert(
-          "Error",
-          "No se pudo detectar la placa. Verifica la conexión e intenta nuevamente."
-        );
-      }
+      
     } finally {
       setIsLoading(false);
     }

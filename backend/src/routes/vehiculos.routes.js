@@ -21,26 +21,26 @@ const router = Router();
 
 router.post(
   "/",
-  [verifyToken, createVehiculoValidator, validateRequest],
+  [ createVehiculoValidator, validateRequest],
   createVehiculo
 );
 
 // Ruta para asociar una ESP32 a un vehículo
 router.post("/asociar-esp32", associateESP32);
 
-router.get("/", verifyToken, getVehiculos);
+router.get("/",  getVehiculos);
 
 router.put(
   "/:id",
-  [verifyToken, updateVehiculoValidator, validateRequest],
+  [updateVehiculoValidator, validateRequest],
   updateVehiculo
 );
 
-router.delete("/:id", [verifyToken], deleteVehiculo);
+router.delete("/:id", deleteVehiculo);
 
-router.get("/pending", [verifyToken, isAdmin], getPendingVehiculos);
+router.get("/pending", [isAdmin], getPendingVehiculos);
 
-router.patch("/:id/validate", [verifyToken, isAdmin], validateVehiculo);
+router.patch("/:id/validate", [isAdmin], validateVehiculo);
 
 router.get("/:propietario_cedula", getVehiculosByPropietario);
 

@@ -17,10 +17,6 @@ import ForcedStartScreen from "./screens/ForcedStartScreen";
 import FactoryResetScreen from "./screens/FactoryResetScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import ModeDetectionScreen from "./screens/ModeDetectionScreen";
-import LocalModeInstructionsScreen from "./screens/LocalModeInstructionsScreen";
-import LocalFingerprintScreen from "./screens/LocalFingerprintScreen";
-import LocalForceStartScreen from "./screens/LocalForceStartScreen";
-import LocalRestoreScreen from "./screens/LocalRestoreScreen";
 
 const Stack = createStackNavigator();
 const AuthContext = createContext();
@@ -35,7 +31,7 @@ export default function App() {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsOnline(state.isConnected);
     });
-  
+
     return () => unsubscribe(); // Limpia el listener
   }, []);
 
@@ -44,36 +40,37 @@ export default function App() {
     const websocket = new WebSocket("wss://tesis-backend-xro2.onrender.com");
 
     websocket.onopen = () => {
-      console.log("WebSocket conectado.");
+      console.log("WebSocket conectado");
     };
 
     websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("Notificación recibida:", data);
+      try {
+        const data = JSON.parse(event.data);
 
-      // Mostrar notificación usando react-native-toast-message
-      Toast.show({
-        type: "info",
-        text1: "Nueva Notificación",
-        text2: data.message || "Mensaje recibido",
-        visibilityTime: 4000,
-      });
+        switch (data.type) {
+          case "evento":
+            Toast.show({
+              type: "info",
+              text1: "Notificación",
+              text2: data.message || "Evento recibido",
+              visibilityTime: 4000,
+            });
+            break;
+          // Manejar más tipos de eventos
+        }
+      } catch (error) {
+        console.error("Error procesando mensaje", error);
+      }
     };
 
     websocket.onclose = () => {
-      console.log("WebSocket desconectado.");
-    };
-
-    websocket.onerror = (error) => {
-      console.error("Error en WebSocket:", error.message);
+      console.log("WebSocket desconectado");
+      // Lógica de reconexión
     };
 
     setWs(websocket);
 
-    // Limpiar conexión al desmontar
-    return () => {
-      websocket.close();
-    };
+    return () => websocket.close();
   }, []);
 
   return (
@@ -144,26 +141,6 @@ export default function App() {
             name="ModeDetection"
             component={ModeDetectionScreen}
             options={{ title: "Modo de operación" }}
-          />
-          <Stack.Screen
-            name="LocalModeScreen"
-            component={LocalModeInstructionsScreen}
-            options={{ title: "Modo local" }}
-          />
-          <Stack.Screen
-            name="LocalFingerprintScreen"
-            component={LocalFingerprintScreen}
-            options={{ title: "Huella dactilar" }}
-          />
-          <Stack.Screen
-            name="LocalForceStartScreen"
-            component={LocalForceStartScreen}
-            options={{ title: "Forzar inicio" }}
-          />
-          <Stack.Screen
-            name="LocalRestoreScreen"
-            component={LocalRestoreScreen}
-            options={{ title: "Restaurar sistema" }}
           />
         </Stack.Navigator>
         <Toast />
