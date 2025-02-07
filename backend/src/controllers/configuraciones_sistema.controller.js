@@ -13,21 +13,6 @@ export const createConfiguracion = async (req, res) => {
         .json({ error: "El campo id_esp32 es obligatorio." });
     }
 
-    // Verificar si la ESP32 ya está registrada
-    const existingConfig = await pool.query(
-      "SELECT * FROM configuraciones_sistema WHERE id_esp32 = $1",
-      [id_esp32]
-    );
-
-    if (existingConfig.rows.length > 0) {
-      return res
-        .status(200)
-        .json({
-          message: "⚠️ La ESP32 ya está registrada.",
-          data: existingConfig.rows[0],
-        });
-    }
-
     const nuevaConfiguracion = await ConfiguracionSistema.create(
       id_esp32,
       descripcion
@@ -46,7 +31,7 @@ export const getConfiguracionById = async (req, res) => {
     const configuracion = await ConfiguracionSistema.findById(id_esp32);
 
     if (!configuracion) {
-      return res.status(404).json({ error: "Placa ESP32 no encontrada." });
+      return res.status(404).json({ error: "Placa ESP32 no encontrada. 1" });
     }
 
     res.json(configuracion);
@@ -73,19 +58,13 @@ export const associateConfiguracion = async (req, res) => {
     const { id_esp32 } = req.params;
     const { descripcion } = req.body;
 
-    if (!descripcion) {
-      return res
-        .status(400)
-        .json({ error: "El campo descripcion es obligatorio." });
-    }
-
     const configuracionActualizada = await ConfiguracionSistema.associate(
       id_esp32,
       descripcion
     );
 
     if (!configuracionActualizada) {
-      return res.status(404).json({ error: "Placa ESP32 no encontrada." });
+      return res.status(404).json({ error: "Placa ESP32 no encontrada.2" });
     }
 
     res.json(configuracionActualizada);
@@ -103,7 +82,7 @@ export const deleteConfiguracion = async (req, res) => {
     const eliminado = await ConfiguracionSistema.delete(id_esp32);
 
     if (!eliminado) {
-      return res.status(404).json({ error: "Placa ESP32 no encontrada." });
+      return res.status(404).json({ error: "Placa ESP32 no encontrada.3" });
     }
 
     res.json({ message: "Configuración eliminada correctamente." });
@@ -194,5 +173,22 @@ export const getEsp32Status = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error al obtener el estado de la ESP32." });
+  }
+};
+
+export const getESP32Dis = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id_esp32 FROM configuraciones_sistema WHERE asociado = false"
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No hay ESP32 disponibles." });
+    }
+
+    res.status(200).json({ esp32_disponibles: result.rows });
+  } catch (error) {
+    console.error("❌ Error al obtener ESP32 disponibles:", error);
+    res.status(500).json({ error: "Error en el servidor." });
   }
 };

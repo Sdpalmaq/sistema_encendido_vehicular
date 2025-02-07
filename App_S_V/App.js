@@ -17,6 +17,8 @@ import ForcedStartScreen from "./screens/ForcedStartScreen";
 import FactoryResetScreen from "./screens/FactoryResetScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import ModeDetectionScreen from "./screens/ModeDetectionScreen";
+import AssignESP32Screen from "./screens/AssignESP32Screen";
+import SendDataScreen from "./screens/SendDataScreen";
 
 const Stack = createStackNavigator();
 const AuthContext = createContext();
@@ -52,7 +54,7 @@ export default function App() {
             Toast.show({
               type: "info",
               text1: "Notificación",
-              text2: data.message || "Evento recibido",
+              text2: data.details || "Evento recibido",
               visibilityTime: 4000,
             });
             break;
@@ -141,6 +143,16 @@ export default function App() {
             name="ModeDetection"
             component={ModeDetectionScreen}
             options={{ title: "Modo de operación" }}
+          />
+          <Stack.Screen
+            name="AssignESP32Screen"
+            component={AssignESP32Screen}
+            options={{ title: "Asociar ESP32" }}
+          />
+          <Stack.Screen
+            name="SendDataScreen"
+            component={SendDataScreen}
+            options={{ title: "Enviar Dato" }}
           />
         </Stack.Navigator>
         <Toast />

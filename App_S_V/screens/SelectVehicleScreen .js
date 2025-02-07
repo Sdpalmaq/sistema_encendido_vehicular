@@ -42,8 +42,18 @@ const SelectVehicleScreen = ({ route, navigation }) => {
       </Text>
       <Text style={styles.cardText}>Placa: {item.placa}</Text>
       <Text style={styles.cardText}>Año: {item.anio}</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => handleAssignESP32(item)}
+      >
+        <Text style={styles.buttonText}>Asociar ESP32</Text>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
+
+  const handleAssignESP32 = (vehiculo) => {
+    navigation.navigate("AssignESP32Screen", { vehiculo, user });
+  };
 
   return (
     <View style={styles.container}>

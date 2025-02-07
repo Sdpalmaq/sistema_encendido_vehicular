@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
 
 const HomeScreen = ({ navigation, route }) => {
   const { user, vehiculo } = route.params;
@@ -59,6 +59,11 @@ const HomeScreen = ({ navigation, route }) => {
       >
         <Text style={styles.buttonText}>Configuración</Text>
       </TouchableOpacity>
+
+      <Button
+        title="Ir a Enviar Datos"
+        onPress={() => navigation.navigate("SendDataScreen")}
+      />
     </View>
   );
 };

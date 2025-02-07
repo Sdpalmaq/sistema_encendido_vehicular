@@ -97,12 +97,7 @@ const LoginScreen = ({ navigation }) => {
             );
             const vehiculos = vehiculosResponse.data;
 
-            if (vehiculos.length === 1) {
-              navigation.navigate("ModeDetection", {
-                user,
-                vehiculo: vehiculos[0],
-              });
-            } else {
+            if (vehiculos.length >= 1) {
               navigation.navigate("SelectVehicle", { user, vehiculos });
             }
           } catch (vehiculoError) {

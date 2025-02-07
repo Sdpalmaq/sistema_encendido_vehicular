@@ -35,7 +35,7 @@ const RegisterVehicleScreen = ({ route, navigation }) => {
       });
 
       Alert.alert("Éxito", "Vehículo registrado con éxito.");
-      navigation.navigate("Home", { user }); // Redirigir al inicio después del registro
+      navigation.navigate("Login"); // Redirigir al inicio después del registro
     } catch (error) {
       console.error("Error al registrar el vehículo:", error);
       Alert.alert(
