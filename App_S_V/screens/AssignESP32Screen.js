@@ -7,7 +7,8 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // ✅ Importación correcta
+import { Picker } from "@react-native-picker/picker"; // Picker para selección de ESP32
+import { Ionicons } from "@expo/vector-icons"; // Íconos mejorados
 import api from "../services/api"; // Conexión con el backend
 
 const AssignESP32Screen = ({ navigation, route }) => {
@@ -58,21 +59,24 @@ const AssignESP32Screen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Asociar ESP32 a Vehículo</Text>
+      <Ionicons name="hardware-chip-outline" size={80} color="#007bff" />
+      <Text style={styles.title}>Asociar ESP32</Text>
       <Text style={styles.subtitle}>Vehículo: {vehiculo.placa}</Text>
 
       <Text style={styles.label}>Seleccione una ESP32:</Text>
       {esp32Disponibles.length > 0 ? (
-        <Picker
-          selectedValue={selectedESP32}
-          onValueChange={(itemValue) => setSelectedESP32(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Seleccione una ESP32..." value="" />
-          {esp32Disponibles.map((esp32) => (
-            <Picker.Item key={esp32.id_esp32} label={esp32.id_esp32} value={esp32.id_esp32} />
-          ))}
-        </Picker>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedESP32}
+            onValueChange={(itemValue) => setSelectedESP32(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Seleccione una ESP32..." value="" />
+            {esp32Disponibles.map((esp32) => (
+              <Picker.Item key={esp32.id_esp32} label={esp32.id_esp32} value={esp32.id_esp32} />
+            ))}
+          </Picker>
+        </View>
       ) : (
         <Text style={styles.noDataText}>No hay ESP32 disponibles.</Text>
       )}
@@ -82,10 +86,18 @@ const AssignESP32Screen = ({ navigation, route }) => {
         onPress={handleAssign}
         disabled={isLoading || !selectedESP32}
       >
-        {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Asociar ESP32</Text>}
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <>
+            <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+            <Text style={styles.buttonText}>Asociar ESP32</Text>
+          </>
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={20} color="#fff" />
         <Text style={styles.cancelButtonText}>Cancelar</Text>
       </TouchableOpacity>
     </View>
@@ -98,7 +110,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#F0F2F5",
   },
   title: {
     fontSize: 24,
@@ -116,14 +128,18 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 10,
   },
-  picker: {
+  pickerContainer: {
     width: "100%",
-    height: 50,
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: 10,
     borderColor: "#ccc",
     borderWidth: 1,
     marginBottom: 15,
+    paddingHorizontal: 5,
+  },
+  picker: {
+    width: "100%",
+    height: 50,
   },
   noDataText: {
     fontSize: 16,
@@ -131,13 +147,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     width: "100%",
     height: 50,
     backgroundColor: "#007bff",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 15,
+    paddingHorizontal: 15,
   },
   buttonDisabled: {
     backgroundColor: "#a1a1a1",
@@ -146,19 +164,23 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 8,
   },
   cancelButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     width: "100%",
     height: 50,
     backgroundColor: "#dc3545",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 10,
+    paddingHorizontal: 15,
   },
   cancelButtonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 8,
   },
 });
 

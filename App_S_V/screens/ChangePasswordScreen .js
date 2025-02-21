@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import api from "../services/api";
 
 const ChangePasswordScreen = ({ route, navigation }) => {
@@ -43,10 +44,7 @@ const ChangePasswordScreen = ({ route, navigation }) => {
       navigation.navigate("Login"); // Redirigir al Login después del cambio de contraseña
     } catch (error) {
       console.error("Error al cambiar contraseña:", error);
-      Alert.alert(
-        "Error",
-        "No se pudo cambiar la contraseña. Inténtalo nuevamente."
-      );
+      Alert.alert("Error", "No se pudo cambiar la contraseña. Inténtalo nuevamente.");
     } finally {
       setLoading(false);
     }
@@ -54,32 +52,47 @@ const ChangePasswordScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Ionicons name="lock-closed-outline" size={80} color="#007bff" />
       <Text style={styles.title}>Cambiar Contraseña</Text>
       <Text style={styles.subtitle}>
         Por favor, establece una nueva contraseña para continuar.
       </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nueva contraseña"
-        secureTextEntry
-        value={newPassword}
-        onChangeText={setNewPassword}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar contraseña"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="key-outline" size={20} color="#007bff" />
+        <TextInput
+          style={styles.input}
+          placeholder="Nueva contraseña"
+          secureTextEntry
+          value={newPassword}
+          onChangeText={setNewPassword}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="key-outline" size={20} color="#007bff" />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirmar contraseña"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+      </View>
+
       <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, loading && styles.buttonDisabled]}
         onPress={handlePasswordChange}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>
-          {loading ? "Actualizando..." : "Cambiar Contraseña"}
-        </Text>
+        {loading ? (
+          <Text style={styles.buttonText}>Actualizando...</Text>
+        ) : (
+          <>
+            <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+            <Text style={styles.buttonText}>Cambiar Contraseña</Text>
+          </>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -88,44 +101,57 @@ const ChangePasswordScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#F0F2F5",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#333",
   },
   subtitle: {
     fontSize: 16,
     textAlign: "center",
     color: "#666",
     marginBottom: 20,
+    paddingHorizontal: 10,
   },
-  input: {
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
-    height: 50,
+    backgroundColor: "#fff",
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: "#fff",
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    paddingHorizontal: 10,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
     height: 50,
     backgroundColor: "#007bff",
+    borderRadius: 10,
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: "#a1a1a1",
   },
   buttonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 10,
   },
 });
 

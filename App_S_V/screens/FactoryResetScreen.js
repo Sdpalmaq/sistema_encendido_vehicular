@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,12 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-} from 'react-native';
-import api from '../services/api';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import api from "../services/api";
 
 const FactoryResetScreen = ({ route, navigation }) => {
-  const { vehiculo } = route.params; // Recibir el vehículo seleccionado
+  const { vehiculo } = route.params;
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFactoryReset = async () => {
@@ -18,10 +19,7 @@ const FactoryResetScreen = ({ route, navigation }) => {
       "Confirmación",
       "¿Estás seguro de que deseas restaurar el sistema? Esta acción no se puede deshacer.",
       [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
+        { text: "Cancelar", style: "cancel" },
         {
           text: "Confirmar",
           onPress: async () => {
@@ -30,7 +28,7 @@ const FactoryResetScreen = ({ route, navigation }) => {
               const response = await api.post(`/sistema/${vehiculo.id_esp32}/restaurar`);
               if (response.status === 200) {
                 Alert.alert("Éxito", "El sistema se ha restaurado correctamente.");
-                navigation.navigate("Home"); // Redirigir al HomeScreen
+                navigation.navigate("Home");
               }
             } catch (error) {
               console.error("Error al restaurar el sistema:", error);
@@ -46,11 +44,13 @@ const FactoryResetScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Ionicons name="alert-circle-outline" size={80} color="#d9534f" />
       <Text style={styles.title}>Restauración de Sistema</Text>
       <Text style={styles.description}>
         Esta acción restaurará el sistema a sus valores predeterminados. 
         Se perderán todas las configuraciones y datos registrados en la placa.
       </Text>
+
       <TouchableOpacity
         style={[styles.button, isLoading && styles.buttonDisabled]}
         onPress={handleFactoryReset}
@@ -59,7 +59,10 @@ const FactoryResetScreen = ({ route, navigation }) => {
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Restaurar Sistema</Text>
+          <>
+            <Ionicons name="refresh-circle-outline" size={24} color="#fff" />
+            <Text style={styles.buttonText}>Restaurar Sistema</Text>
+          </>
         )}
       </TouchableOpacity>
     </View>
@@ -72,27 +75,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#F0F2F5",
   },
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
     color: "#333",
+    textAlign: "center",
   },
   description: {
     fontSize: 16,
     color: "#666",
     textAlign: "center",
     marginBottom: 30,
+    paddingHorizontal: 10,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     width: "80%",
     height: 50,
     backgroundColor: "#d9534f",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 10,
+    paddingHorizontal: 15,
   },
   buttonDisabled: {
     backgroundColor: "#a1a1a1",
@@ -101,6 +109,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 10,
   },
 });
 

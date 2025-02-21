@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const SelectVehicleScreen = ({ route, navigation }) => {
   const { vehiculos, user } = route.params; // Vehículos y usuario recibidos como parámetros
@@ -16,36 +17,26 @@ const SelectVehicleScreen = ({ route, navigation }) => {
       "Confirmación",
       `¿Quieres seleccionar el vehículo ${vehiculo.placa}?`,
       [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
+        { text: "Cancelar", style: "cancel" },
         {
           text: "Seleccionar",
-          onPress: () =>
-            navigation.navigate("ModeDetection", {
-              user,
-              vehiculo,
-            }),
+          onPress: () => navigation.navigate("ModeDetection", { user, vehiculo }),
         },
       ]
     );
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => handleSelectVehicle(item)}
-    >
-      <Text style={styles.cardTitle}>
-        {item.marca} {item.modelo}
-      </Text>
+    <TouchableOpacity style={styles.card} onPress={() => handleSelectVehicle(item)}>
+      <View style={styles.cardHeader}>
+        <Ionicons name="car-outline" size={24} color="#007bff" />
+        <Text style={styles.cardTitle}>{item.marca} {item.modelo}</Text>
+      </View>
       <Text style={styles.cardText}>Placa: {item.placa}</Text>
       <Text style={styles.cardText}>Año: {item.anio}</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleAssignESP32(item)}
-      >
+
+      <TouchableOpacity style={styles.button} onPress={() => handleAssignESP32(item)}>
+        <Ionicons name="hardware-chip-outline" size={20} color="#fff" />
         <Text style={styles.buttonText}>Asociar ESP32</Text>
       </TouchableOpacity>
     </TouchableOpacity>
@@ -64,9 +55,7 @@ const SelectVehicleScreen = ({ route, navigation }) => {
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>
-            No hay vehículos disponibles para seleccionar.
-          </Text>
+          <Text style={styles.emptyText}>No hay vehículos disponibles para seleccionar.</Text>
         }
       />
     </View>
@@ -77,10 +66,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#F0F2F5",
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
@@ -92,23 +81,45 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 15,
-    elevation: 3,
+    elevation: 4,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 5,
     color: "#007bff",
+    marginLeft: 8,
   },
   cardText: {
     fontSize: 14,
     color: "#555",
+    marginBottom: 2,
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginTop: 10,
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
   },
   emptyText: {
     fontSize: 16,

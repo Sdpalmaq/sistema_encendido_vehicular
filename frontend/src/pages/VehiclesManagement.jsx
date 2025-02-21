@@ -83,7 +83,7 @@ const VehiclesManagement = () => {
 
   const handleValidate = async (id, isApproved, comentarios) => {
     try {
-      await api.post(`/vehiculos/validar`, {
+      await api.post(`/vehiculos/${id}/validate`, {
         id,
         estado: isApproved ? "Activo" : "Rechazado",
         comentarios,

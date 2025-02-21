@@ -9,13 +9,16 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import api from "../services/api";
 
 const LoginScreen = ({ navigation }) => {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { setUser, isOnline } = useAuth();
 
   const handleLocalLogin = async () => {
@@ -40,13 +43,12 @@ const LoginScreen = ({ navigation }) => {
       });
 
       if (result.success) {
-        // Simula un usuario local para el flujo offline
         const localUser = {
           nombre: "Usuario Local",
           vehiculo: "Vehículo Local",
         };
         setUser(localUser);
-        navigation.navigate("LocalModeScreen"); // Redirige al modo local
+        navigation.navigate("LocalModeScreen");
       } else {
         Alert.alert("Error", "Autenticación fallida.");
       }
@@ -79,15 +81,11 @@ const LoginScreen = ({ navigation }) => {
     setIsLoading(true);
 
     try {
-      const response = await api.post("/auth/login", {
-        correo,
-        contrasena,
-      });
+      const response = await api.post("/auth/login", { correo, contrasena });
 
       if (response.status === 200) {
         const { user } = response.data;
 
-        // Verificar si el usuario debe cambiar su contraseña
         if (user.debe_cambiar_contrasena) {
           navigation.navigate("ChangePassword", { user });
         } else {
@@ -102,10 +100,9 @@ const LoginScreen = ({ navigation }) => {
             }
           } catch (vehiculoError) {
             if (vehiculoError.response?.status === 404) {
-              // No hay vehículos registrados
               Alert.alert(
                 "Registrar vehículo",
-                "No tienes ningún vehículo registrado. Por favor, registra uno."
+                "No tienes ningún vehículo registrado. Registra uno."
               );
               navigation.navigate("RegisterVehicle", { user });
             } else {
@@ -121,9 +118,10 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error en el inicio de sesión:", error);
-      const serverMessage =
-        error.response?.data?.message || "Problema del servidor";
-      Alert.alert("Error", serverMessage);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Problema del servidor"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -131,21 +129,39 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* Logo de la empresa */}
+      <Image source={require("../assets/logo.png")} style={styles.logo} />
+
       <Text style={styles.title}>Iniciar Sesión</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Correo electrónico"
         keyboardType="email-address"
         value={correo}
         onChangeText={setCorreo}
+        autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry
-        value={contrasena}
-        onChangeText={setContrasena}
-      />
+
+      {/* Campo de contraseña con botón para mostrar/ocultar */}
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.inputPassword}
+          placeholder="Contraseña"
+          secureTextEntry={!showPassword}
+          value={contrasena}
+          onChangeText={setContrasena}
+        />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Ionicons
+            name={showPassword ? "eye-off" : "eye"}
+            size={24}
+            color="gray"
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Botón de inicio de sesión */}
       <TouchableOpacity
         style={[styles.button, isLoading && styles.buttonDisabled]}
         onPress={handleLogin}
@@ -154,10 +170,17 @@ const LoginScreen = ({ navigation }) => {
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>
-            {isOnline ? "Iniciar Sesión" : "Autenticación Local"}
-          </Text>
+          <Text style={styles.buttonText}>Iniciar Sesión</Text>
         )}
+      </TouchableOpacity>
+
+      {/* Botón de autenticación biométrica si el dispositivo lo soporta */}
+      <TouchableOpacity
+        style={styles.biometricButton}
+        onPress={handleLocalLogin}
+      >
+        <Ionicons name="finger-print" size={30} color="#007bff" />
+        <Text style={styles.biometricText}>Autenticación Biométrica</Text>
       </TouchableOpacity>
     </View>
   );
@@ -169,7 +192,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#F0F2F5",
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+    resizeMode: "contain",
   },
   title: {
     fontSize: 26,
@@ -182,10 +211,26 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    borderRadius: 10,
+    paddingHorizontal: 15,
     marginBottom: 15,
     backgroundColor: "#fff",
+    fontSize: 16,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+  },
+  inputPassword: {
+    flex: 1,
     fontSize: 16,
   },
   button: {
@@ -194,7 +239,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: 10,
+    marginBottom: 10,
   },
   buttonDisabled: {
     backgroundColor: "#a1a1a1",
@@ -203,6 +249,16 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  biometricButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  biometricText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: "#007bff",
   },
 });
 

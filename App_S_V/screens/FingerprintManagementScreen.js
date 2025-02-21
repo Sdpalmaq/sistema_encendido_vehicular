@@ -10,6 +10,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import api from "../services/api";
 
 const FingerprintManagementScreen = ({ route }) => {
@@ -27,9 +28,7 @@ const FingerprintManagementScreen = ({ route }) => {
 
   const fetchHuellas = async () => {
     try {
-      const response = await api.get(
-        `/huellas-dactilares/get-huellas/${vehiculo.id}`
-      );
+      const response = await api.get(`/huellas-dactilares/get-huellas/${vehiculo.id}`);
       setHuellas(response.data);
     } catch (error) {
       Alert.alert("Error", "No se pudieron cargar las huellas dactilares.");
@@ -67,17 +66,12 @@ const FingerprintManagementScreen = ({ route }) => {
       "Confirmar",
       `¿Estás seguro de eliminar la huella con ID ${id_huella}?`,
       [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
+        { text: "Cancelar", style: "cancel" },
         {
           text: "Eliminar",
           onPress: async () => {
             try {
-              const response = await api.delete(
-                `/huellas-dactilares/eliminar/${vehiculo.id_esp32}/${id_huella}`
-              );
+              const response = await api.delete(`/huellas-dactilares/eliminar/${vehiculo.id_esp32}/${id_huella}`);
               Alert.alert("Éxito", response.data.message);
               fetchHuellas();
             } catch (error) {
@@ -91,14 +85,14 @@ const FingerprintManagementScreen = ({ route }) => {
 
   const renderHuellaItem = ({ item }) => (
     <View style={styles.huellaItem}>
-      <Text style={styles.huellaText}>ID: {item.id_huella}</Text>
-      <Text style={styles.huellaText}>Nombre: {item.nombre_persona}</Text>
-      <Text style={styles.huellaText}>Dedo: {item.dedo}</Text>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => eliminarHuella(item.id_huella)}
-      >
-        <Text style={styles.deleteButtonText}>Eliminar</Text>
+      <Ionicons name="finger-print" size={30} color="#007bff" />
+      <View style={styles.huellaInfo}>
+        <Text style={styles.huellaText}>ID: {item.id_huella}</Text>
+        <Text style={styles.huellaText}>Nombre: {item.nombre_persona}</Text>
+        <Text style={styles.huellaText}>Dedo: {item.dedo}</Text>
+      </View>
+      <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarHuella(item.id_huella)}>
+        <Ionicons name="trash-outline" size={24} color="#fff" />
       </TouchableOpacity>
     </View>
   );
@@ -120,41 +114,28 @@ const FingerprintManagementScreen = ({ route }) => {
         keyExtractor={(item) => `${item.id_huella}`}
         ListEmptyComponent={<Text>No hay huellas registradas.</Text>}
       />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => setModalVisible(true)}
-      >
+
+      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+        <Ionicons name="add-circle-outline" size={24} color="#fff" />
         <Text style={styles.addButtonText}>Agregar Huella</Text>
       </TouchableOpacity>
+
       <Modal visible={modalVisible} animationType="slide">
         <View style={styles.modalContainer}>
+          <Ionicons name="finger-print-outline" size={50} color="#007bff" />
           <Text style={styles.modalTitle}>Registrar Huella</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="ID de la Huella (1-150)"
-            keyboardType="numeric"
-            value={idHuella}
-            onChangeText={setIdHuella}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre de la Persona"
-            value={nombrePersona}
-            onChangeText={setNombrePersona}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Dedo (ej. índice derecho)"
-            value={dedo}
-            onChangeText={setDedo}
-          />
+
+          <TextInput style={styles.input} placeholder="ID de la Huella (1-150)" keyboardType="numeric" value={idHuella} onChangeText={setIdHuella} />
+          <TextInput style={styles.input} placeholder="Nombre de la Persona" value={nombrePersona} onChangeText={setNombrePersona} />
+          <TextInput style={styles.input} placeholder="Dedo (ej. índice derecho)" value={dedo} onChangeText={setDedo} />
+
           <TouchableOpacity style={styles.saveButton} onPress={registrarHuella}>
+            <Ionicons name="checkmark-circle-outline" size={24} color="#fff" />
             <Text style={styles.saveButtonText}>Guardar</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => setModalVisible(false)}
-          >
+
+          <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+            <Ionicons name="close-circle-outline" size={24} color="#fff" />
             <Text style={styles.cancelButtonText}>Cancelar</Text>
           </TouchableOpacity>
         </View>
@@ -167,94 +148,97 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#F0F2F5",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    textAlign: "center",
+    marginBottom: 20,
   },
   huellaItem: {
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    elevation: 3,
+  },
+  huellaInfo: {
+    flex: 1,
+    marginLeft: 10,
   },
   huellaText: {
     fontSize: 16,
+    color: "#333",
   },
   deleteButton: {
-    marginTop: 10,
-    backgroundColor: "#ff4d4d",
+    backgroundColor: "#dc3545",
     padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    borderRadius: 8,
   },
   addButton: {
-    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#007bff",
     padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
+    borderRadius: 10,
+    justifyContent: "center",
   },
   addButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 10,
   },
   modalContainer: {
     flex: 1,
-    padding: 20,
     justifyContent: "center",
-    backgroundColor: "#f9f9f9",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#F0F2F5",
   },
   modalTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginVertical: 20,
   },
   input: {
+    width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 10,
     marginBottom: 15,
-    fontSize: 16,
     backgroundColor: "#fff",
   },
   saveButton: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#28a745",
     padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
+    borderRadius: 10,
   },
   saveButtonText: {
     color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    fontSize: 16,
+    marginLeft: 10,
   },
   cancelButton: {
-    marginTop: 10,
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#dc3545",
     padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
+    borderRadius: 10,
+    marginTop: 10,
   },
   cancelButtonText: {
     color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    fontSize: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    marginLeft: 10,
   },
 });
 

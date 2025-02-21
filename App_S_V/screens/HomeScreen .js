@@ -1,105 +1,101 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Button } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const HomeScreen = ({ navigation, route }) => {
   const { user, vehiculo } = route.params;
 
-  const handleConnection = () => {
-    navigation.navigate("ConnectionScreen", { user, vehiculo });
-  };
-
-  const handleFingerprintManagement = () => {
-    navigation.navigate("FingerprintManagement", { user, vehiculo });
-  };
-
-  const handleForcedStart = () => {
-    navigation.navigate("ForcedStart", { user, vehiculo });
-  };
-
-  const handleFactoryReset = () => {
-    navigation.navigate("FactoryReset", { user, vehiculo });
-  };
-  const handleSettings = () => {
-    navigation.navigate("Settings", { user, vehiculo });
-  };
+  const menuOptions = [
+    { title: "Gestión de Conexión", icon: "wifi-outline", screen: "ConnectionScreen" },
+    { title: "Gestión de Huellas", icon: "finger-print", screen: "FingerprintManagement" },
+    { title: "Arranque Forzoso", icon: "power", screen: "ForcedStart" },
+    { title: "Restaurar Sistema", icon: "refresh-circle-outline", screen: "FactoryReset" },
+    { title: "Configuración", icon: "settings-outline", screen: "Settings" },
+  ];
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido, {user.nombre}</Text>
-      <Text style={styles.subtitle}>Vehículo: {vehiculo.placa}</Text>
+    <ImageBackground source={require("../assets/back.jpg")} style={styles.background}>
+      <View style={styles.header}>
+        <Text style={styles.appTitle}>Sistema de Gestión Vehicular</Text>
+      </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleConnection}>
-        <Text style={styles.buttonText}>Gestión de Conexión</Text>
-      </TouchableOpacity>
+      <Text style={styles.subtitle}>Bienvenido, {user.nombre}</Text>
+      <Text style={styles.vehicleText}>Vehículo: {vehiculo.placa}</Text>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#4caf50" }]}
-        onPress={handleFingerprintManagement}
-      >
-        <Text style={styles.buttonText}>Gestión de Huellas</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#f44336" }]}
-        onPress={handleForcedStart}
-      >
-        <Text style={styles.buttonText}>Arranque Forzoso</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#d9534f" }]}
-        onPress={handleFactoryReset}
-      >
-        <Text style={styles.buttonText}>Restaurar Sistema</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#007bff" }]}
-        onPress={handleSettings}
-      >
-        <Text style={styles.buttonText}>Configuración</Text>
-      </TouchableOpacity>
-
-      <Button
-        title="Ir a Enviar Datos"
-        onPress={() => navigation.navigate("SendDataScreen")}
-      />
-    </View>
+      <View style={styles.gridContainer}>
+        {menuOptions.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            onPress={() => navigation.navigate(item.screen, { user, vehiculo })}
+          >
+            <Ionicons name={item.icon} size={40} color="#007bff" />
+            <Text style={styles.cardTitle}>{item.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
+    backgroundColor: "#F0F2F5",
+  },
+  header: {
+    backgroundColor: "#007bff",
+    height: 100,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-    backgroundColor: "#f4f4f4",
+    paddingTop: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
-  title: {
-    fontSize: 24,
+  appTitle: {
+    color: "white",
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 20,
-    color: "#333",
   },
   subtitle: {
     fontSize: 18,
-    marginBottom: 30,
+    textAlign: "center",
+    marginVertical: 10,
+    color: "#333",
+  },
+  vehicleText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
     color: "#555",
   },
-  button: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#007bff",
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
-    marginBottom: 15,
+    paddingHorizontal: 10,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
+  card: {
+    width: "45%",
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 10,
+    margin: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  cardTitle: {
+    fontSize: 14,
     fontWeight: "bold",
+    marginTop: 10,
+    textAlign: "center",
+    color: "#333",
   },
 });
 

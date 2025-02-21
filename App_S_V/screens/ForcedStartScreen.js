@@ -7,37 +7,27 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import api from "../services/api"; // Aquí se utiliza el archivo `api.js` proporcionado
+import { Ionicons } from "@expo/vector-icons";
+import api from "../services/api";
 
 const ForcedStartScreen = ({ route }) => {
-  const { vehiculo } = route.params; // ID único de la placa ESP32
+  const { vehiculo } = route.params;
   const [isLoading, setIsLoading] = useState(false);
 
   const handleForcedStart = async () => {
     setIsLoading(true);
     try {
-      const payload = {
-        id_esp32: vehiculo.id_esp32,
-      };
-      // Llamada al backend
+      const payload = { id_esp32: vehiculo.id_esp32 };
       const response = await api.post("forzar-arranque/forzar", payload);
 
       if (response.status === 200) {
-        Alert.alert(
-          "Éxito",
-          response.data.message || "El vehículo ha sido encendido."
-        );
+        Alert.alert("Éxito", response.data.message || "El vehículo ha sido encendido.");
       } else {
-        Alert.alert(
-          "Error",
-          "No se pudo encender el vehículo. Intenta nuevamente."
-        );
+        Alert.alert("Error", "No se pudo encender el vehículo. Intenta nuevamente.");
       }
     } catch (error) {
       console.error("Error en el arranque forzoso:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        "Hubo un problema al procesar tu solicitud.";
+      const errorMessage = error.response?.data?.message || "Hubo un problema al procesar tu solicitud.";
       Alert.alert("Error", errorMessage);
     } finally {
       setIsLoading(false);
@@ -46,12 +36,13 @@ const ForcedStartScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <Ionicons name="car-sport-outline" size={80} color="#007bff" />
       <Text style={styles.title}>Arranque Forzoso</Text>
       <Text style={styles.subtitle}>
-        Este módulo permite encender el vehículo asociado a la placa ESP32 con
-        ID:
+        Este módulo permite encender el vehículo asociado a la placa ESP32 con ID:
       </Text>
       <Text style={styles.esp32Id}>{vehiculo.id_esp32}</Text>
+
       <TouchableOpacity
         style={[styles.button, isLoading && styles.buttonDisabled]}
         onPress={handleForcedStart}
@@ -60,7 +51,10 @@ const ForcedStartScreen = ({ route }) => {
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Encender Vehículo</Text>
+          <>
+            <Ionicons name="power" size={24} color="#fff" />
+            <Text style={styles.buttonText}>Encender Vehículo</Text>
+          </>
         )}
       </TouchableOpacity>
     </View>
@@ -73,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#F0F2F5",
   },
   title: {
     fontSize: 24,
@@ -94,11 +88,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
     width: "80%",
     padding: 15,
     backgroundColor: "#007bff",
     borderRadius: 8,
-    alignItems: "center",
+    justifyContent: "center",
   },
   buttonDisabled: {
     backgroundColor: "#a1a1a1",
@@ -107,6 +103,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 10,
   },
 });
 

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import api from "../services/api";
 
 const RegisterVehicleScreen = ({ route, navigation }) => {
@@ -38,10 +39,7 @@ const RegisterVehicleScreen = ({ route, navigation }) => {
       navigation.navigate("Login"); // Redirigir al inicio después del registro
     } catch (error) {
       console.error("Error al registrar el vehículo:", error);
-      Alert.alert(
-        "Error",
-        "No se pudo registrar el vehículo. Inténtalo nuevamente."
-      );
+      Alert.alert("Error", "No se pudo registrar el vehículo. Inténtalo nuevamente.");
     } finally {
       setLoading(false);
     }
@@ -49,40 +47,42 @@ const RegisterVehicleScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Ionicons name="car-outline" size={80} color="#28a745" />
       <Text style={styles.title}>Registrar Vehículo</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Placa"
-        value={placa}
-        onChangeText={setPlaca}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Marca"
-        value={marca}
-        onChangeText={setMarca}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Modelo"
-        value={modelo}
-        onChangeText={setModelo}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Año"
-        value={anio}
-        keyboardType="numeric"
-        onChangeText={setAnio}
-      />
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="pricetag-outline" size={20} color="#28a745" />
+        <TextInput style={styles.input} placeholder="Placa" value={placa} onChangeText={setPlaca} />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="business-outline" size={20} color="#28a745" />
+        <TextInput style={styles.input} placeholder="Marca" value={marca} onChangeText={setMarca} />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="car-sport-outline" size={20} color="#28a745" />
+        <TextInput style={styles.input} placeholder="Modelo" value={modelo} onChangeText={setModelo} />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Ionicons name="calendar-outline" size={20} color="#28a745" />
+        <TextInput style={styles.input} placeholder="Año" value={anio} keyboardType="numeric" onChangeText={setAnio} />
+      </View>
+
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={handleRegister}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>
-          {loading ? "Registrando..." : "Registrar Vehículo"}
-        </Text>
+        {loading ? (
+          <Text style={styles.buttonText}>Registrando...</Text>
+        ) : (
+          <>
+            <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+            <Text style={styles.buttonText}>Registrar Vehículo</Text>
+          </>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -91,10 +91,9 @@ const RegisterVehicleScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#F0F2F5",
   },
   title: {
     fontSize: 24,
@@ -102,23 +101,31 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#333",
   },
-  input: {
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
-    height: 50,
+    backgroundColor: "#fff",
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: "#fff",
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    paddingHorizontal: 10,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
     height: 50,
     backgroundColor: "#28a745",
+    borderRadius: 10,
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
   },
   buttonDisabled: {
     backgroundColor: "#a1a1a1",
@@ -127,6 +134,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 10,
   },
 });
 
