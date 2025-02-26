@@ -123,12 +123,7 @@ const VehiclesManagement = () => {
         Gestión de Vehículos
       </h2>
       <div className="mb-8">
-        <button
-          onClick={handleCreate}
-          className="mb-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow-lg"
-        >
-          Agregar Vehículo
-        </button>
+        
       </div>
       <div className="mb-10">
         <h3 className="text-xl font-semibold text-gray-600 mb-4">

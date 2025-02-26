@@ -49,15 +49,6 @@ const Sidebar = ({ isAdmin }) => {
                 <span>Vehículos</span>
               </Link>
             </li>
-            <li className="mb-6">
-              <Link
-                to="/monitoring"
-                className="flex items-center p-2 hover:bg-gray-700 rounded-md transition-colors"
-              >
-                <AiOutlineMonitor className="mr-3" />
-                <span>Monitoreo</span>
-              </Link>
-            </li>
           </>
         )}
       </ul>
