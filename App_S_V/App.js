@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import NetInfo from "@react-native-community/netinfo";
 
 import Toast from "react-native-toast-message"; // Importar Toast para notificaciones
+import { Alert } from "react-native";
 import LoginScreen from "./screens/LoginScreen ";
 import HomeScreen from "./screens/HomeScreen ";
 import ChangePasswordScreen from "./screens/ChangePasswordScreen ";
@@ -51,12 +52,12 @@ export default function App() {
 
         switch (data.type) {
           case "evento":
-            Toast.show({
-              type: "info",
-              text1: "Notificación",
-              text2: data.details || "Evento recibido",
-              visibilityTime: 4000,
-            });
+            Alert.alert(
+              "🔔 Notificación",
+              data.details || "Evento recibido",
+              [{ text: "OK", onPress: () => {} }],
+              { cancelable: true }
+            );
             break;
           // Manejar más tipos de eventos
         }
