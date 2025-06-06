@@ -4,10 +4,18 @@ import cors from "cors";
 import app from "./app.js"; // Tu app de Express
 import { subscribeToTopic } from "./config/mqtt.config.js";
 
-app.use(cors({
-  origin: "https://tesis-frontend-dckmg9m51-sdpalmaqs-projects.vercel.app",
-  credentials: true
-}));
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://tesis-frontend-dckmg9m51-sdpalmaqs-projects.vercel.app"
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+// 🌐 CORS para todas las rutas (incluyendo OPTIONS preflight)
+app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
