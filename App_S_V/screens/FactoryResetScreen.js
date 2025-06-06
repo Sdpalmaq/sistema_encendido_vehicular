@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import api from "../services/api";
 
 const FactoryResetScreen = ({ route, navigation }) => {
-  const { vehiculo } = route.params;
+  const { user, vehiculo } = route.params;
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFactoryReset = async () => {
@@ -25,14 +25,22 @@ const FactoryResetScreen = ({ route, navigation }) => {
           onPress: async () => {
             setIsLoading(true);
             try {
-              const response = await api.post(`/sistema/${vehiculo.id_esp32}/restaurar`);
+              const response = await api.post(
+                `/sistema/${vehiculo.id_esp32}/restaurar`
+              );
               if (response.status === 200) {
-                Alert.alert("Éxito", "El sistema se ha restaurado correctamente.");
-                navigation.navigate("Home");
+                Alert.alert(
+                  "Éxito",
+                  "El sistema se ha restaurado correctamente."
+                );
+                navigation.navigate("Home", { user, vehiculo });
               }
             } catch (error) {
               console.error("Error al restaurar el sistema:", error);
-              Alert.alert("Error", "No se pudo completar la acción. Inténtalo de nuevo.");
+              Alert.alert(
+                "Error",
+                "No se pudo completar la acción. Inténtalo de nuevo."
+              );
             } finally {
               setIsLoading(false);
             }
@@ -47,8 +55,8 @@ const FactoryResetScreen = ({ route, navigation }) => {
       <Ionicons name="alert-circle-outline" size={80} color="#d9534f" />
       <Text style={styles.title}>Restauración de Sistema</Text>
       <Text style={styles.description}>
-        Esta acción restaurará el sistema a sus valores predeterminados. 
-        Se perderán todas las configuraciones y datos registrados en la placa.
+        Esta acción restaurará el sistema a sus valores predeterminados. Se
+        perderán todas las configuraciones y datos registrados en la placa.
       </Text>
 
       <TouchableOpacity

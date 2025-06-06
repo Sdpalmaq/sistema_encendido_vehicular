@@ -179,8 +179,7 @@ const LoginScreen = ({ navigation }) => {
         style={styles.biometricButton}
         onPress={handleLocalLogin}
       >
-        <Ionicons name="finger-print" size={30} color="#007bff" />
-        <Text style={styles.biometricText}>Autenticación Biométrica</Text>
+      
       </TouchableOpacity>
     </View>
   );

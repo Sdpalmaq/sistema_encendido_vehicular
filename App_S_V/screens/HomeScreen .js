@@ -6,7 +6,6 @@ const HomeScreen = ({ navigation, route }) => {
   const { user, vehiculo } = route.params;
 
   const menuOptions = [
-    { title: "Gestión de Conexión", icon: "wifi-outline", screen: "ConnectionScreen" },
     { title: "Gestión de Huellas", icon: "finger-print", screen: "FingerprintManagement" },
     { title: "Arranque Forzoso", icon: "power", screen: "ForcedStart" },
     { title: "Restaurar Sistema", icon: "refresh-circle-outline", screen: "FactoryReset" },
